@@ -1,63 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+char Campo[20][10];
 
-char CampoDeJogo[20][10];
-void InicializarCampo();//acontece apenas no inicio do jogo e inicializa o campo de jogo
-void PrintarCampo();//sera chamado sempre que o campo de jogo for mudado
-void Jogar();
-void Gravidade();//sera chamado ao fim de cada turno e fara com que a peca mova uma unidade para baixo
+void ConstruirCampo();
+void PrintarCampo();
+void ConstruirNovaPeca();
 
+typedef struct
+{
+int Posicao_1X;
+int Posicao_1Y;
+int Posicao_2X;
+int Posicao_2Y;
+int Posicao_3X;
+int Posicao_3Y;
+int Posicao_4X;
+int Posicao_4Y;
+
+}Peca;
 
 int main()
 {
-   InicializarCampo();
-   Jogar();
 
-}
-
-void InicializarCampo()
-{
-    for (int i=0; i<20; i++)
+ConstruirCampo();
+int GameOver = 0;
+while(!GameOver)//loop principal
     {
-        for (int j=0; j<10; j++)
-        {
-        CampoDeJogo[i][j] = '.';
-        }
-    }
 
-}
-
-void Jogar()
-{
-int TempoPorTurno = 500;//Essa variavel e o tempo que o jogo leva para a gravidade desces a peca uma unidade
-    int FimDoJogo = 0;//Deve mudar para 1 se as pecas atingirem o topo
-    while (!FimDoJogo)//repetir ate fim do jogo
-    {
-    CriarBloco();//criar novo bloco assim que o atual parar
-        while (!BlocoParado)
+    EliminarLinhasCompletas();
+    ConstruirNovaPeca();
+    while(!PecaCaiu)//loop que verifica se a peca atual caiu
         {
-            int MomentoAtual = clock();
-                while(clock() < MomentoAtual + TempoPorTurno)
-                {
-                //este e o tempo em que o jogador estara livre para mover a peca
-                PrintarCampo();//printa o campo novamente se o jogador mover a peca
-                }
-            Gravidade();//a gravidade fara o bloco descer 1 unidade a cada turno
-            PrintarCampo();//printa o campo ao fim do turno
+        int Turno = 500;//tempo em ms que demora para uma peca cair um quadrado
+        int CurrentTime = time();
+
+        Gravidade();
+        PrintarCampo();
+        while (time() < CurrentTime+Turno)//loop que engloba a passagem de um turno
+            {
+            //gira a peca se o jogador pressionar 'para cima'
+            //move a peca se o jogador pressionar 'esquerda' ou 'direita'
+            //assiona Gravidade() se o jogador pressionar 'para baixo'
+            //SE o jogador modificar a peca, PrintarCampo()
+            }
         }
     }
 }
+
+void ConstruirCampo()
+    {
+    for (int i =0; i<20; i++)
+        {
+        for (int j =0; j<10; j++)
+            {
+            Campo[i][j] = '.';
+            }
+        }
+    }
 
 void PrintarCampo()
-{
-
-    for (int i=0; i<20; i++)
     {
-        for (int j=0; j<10; j++)
+    for (int i =0; i<20; i++)
         {
-        printf("%c", CampoDeJogo[i][j]);
+        for (int j =0; j<10; j++)
+            {
+            printf("%c", Campo[i][j]);
+            }
+        printf("\n");
         }
-    printf("\n");
     }
-}
+
+void ConstruirNovaPeca()
+    {
+    }
