@@ -42,12 +42,13 @@ while(!GameOver)//loop principal
     int PecaCaiu = 0;
     while(!PecaCaiu)//loop que verifica se a peca atual caiu
         {
-        time_t Turno = 500;//tempo em ms que demora para uma peca cair um quadrado
-        time_t CurrentTime = time(0);//armazena o horario atual para determinar a passagem de um turno(tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
+        clock_t Turno = 99999;//tempo em ms que demora para uma peca cair um quadrado
+        clock_t CurrentTime = clock()/CLOCKS_PER_SEC;//armazena o horario atual para determinar a passagem de um turno(tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
+
         MesclarPecaCampo();
         PrintarCampo();
 
-        while (time(0) < CurrentTime+Turno)//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
+        while (CurrentTime < (double)(CurrentTime+Turno))//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
             {
             if(!PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, esse if sai do while imediatamente
             char tecla;
@@ -76,7 +77,6 @@ void ConstruirCampo()
 
 void PrintarCampo()
     {
-    delay(10);
     system("cls");
     for (int i =0; i<20; i++)
         {
@@ -90,7 +90,17 @@ void PrintarCampo()
 
 void MesclarPecaCampo()
     {
-    for (int i=0; i<4; i++)
+    for (int i =0; i<20; i++)//limpa a peca antiga
+        {
+        for (int j =0; j<10; j++)
+            {
+            if(Campo[i][j]=='X');
+                {
+                Campo[i][j]='.';
+                }
+            }
+        }
+    for (int i=0; i<4; i++)//posiciona a nova peca
         {
         for (int j=0; j<4; j++)
             {
@@ -105,23 +115,33 @@ void MesclarPecaCampo()
 int Mover(char direcao)
     {
     char PecaTemporaria[4][4];
-    if(direcao=='w')//girar peca no sentido horario
+    if(direcao=='w')
         {
         if(ChecarSeCabe('w'))
             {
-            for(int i=0; i<4; i++)//esse loop inverte  X e Y da peca atual e armazena em uma peca temporaria
+                PecaTemporaria[0][0]=PecaAtual.PecaArray[3][0];
+                PecaTemporaria[0][1]=PecaAtual.PecaArray[2][0];
+                PecaTemporaria[0][2]=PecaAtual.PecaArray[1][0];
+                PecaTemporaria[0][3]=PecaAtual.PecaArray[0][0];
+                PecaTemporaria[1][0]=PecaAtual.PecaArray[3][1];
+                PecaTemporaria[1][1]=PecaAtual.PecaArray[2][1];
+                PecaTemporaria[1][2]=PecaAtual.PecaArray[1][1];
+                PecaTemporaria[1][3]=PecaAtual.PecaArray[0][1];
+                PecaTemporaria[2][0]=PecaAtual.PecaArray[3][2];
+                PecaTemporaria[2][1]=PecaAtual.PecaArray[2][2];
+                PecaTemporaria[2][2]=PecaAtual.PecaArray[1][2];
+                PecaTemporaria[2][3]=PecaAtual.PecaArray[0][2];
+                PecaTemporaria[3][0]=PecaAtual.PecaArray[3][3];
+                PecaTemporaria[3][1]=PecaAtual.PecaArray[2][3];
+                PecaTemporaria[3][2]=PecaAtual.PecaArray[1][3];
+                PecaTemporaria[3][3]=PecaAtual.PecaArray[0][3];
+
+                for(int i=0; i<4; i++)
                 {
-                for(int j=0; j<4; j++)
-                    {
-                    PecaTemporaria[i][j]=PecaAtual.PecaArray[j][i];
-                    }
-                }
-            for(int i=0; i<4; i++)//esse loop utiliza a peca temporaria para rearranjar a peca atual de modo invertido
-                {
-                for(int j=0; j<4; j++)
-                    {
-                    PecaAtual.PecaArray[i][j]=PecaTemporaria[i][j];
-                    }
+                    for(int j=0; j<4; j++)
+                        {
+                        PecaAtual.PecaArray[i][j] = PecaTemporaria[i][j];
+                        }
                 }
             }
         return 0;
@@ -159,38 +179,79 @@ int Mover(char direcao)
 
 int ChecarSeCabe(char direcao)
     {
-    int aprovador = 0;
-    if (direcao=='w')
+    Peca PecaTemporaria = PecaAtual;
+    if (direcao=='w')//girar horario
         {
-        if(aprovador)
+        PecaTemporaria.PecaArray[0][0]=PecaAtual.PecaArray[3][0];
+        PecaTemporaria.PecaArray[0][1]=PecaAtual.PecaArray[2][0];
+        PecaTemporaria.PecaArray[0][2]=PecaAtual.PecaArray[1][0];
+        PecaTemporaria.PecaArray[0][3]=PecaAtual.PecaArray[0][0];
+        PecaTemporaria.PecaArray[1][0]=PecaAtual.PecaArray[3][1];
+        PecaTemporaria.PecaArray[1][1]=PecaAtual.PecaArray[2][1];
+        PecaTemporaria.PecaArray[1][2]=PecaAtual.PecaArray[1][1];
+        PecaTemporaria.PecaArray[1][3]=PecaAtual.PecaArray[0][1];
+        PecaTemporaria.PecaArray[2][0]=PecaAtual.PecaArray[3][2];
+        PecaTemporaria.PecaArray[2][1]=PecaAtual.PecaArray[2][2];
+        PecaTemporaria.PecaArray[2][2]=PecaAtual.PecaArray[1][2];
+        PecaTemporaria.PecaArray[2][3]=PecaAtual.PecaArray[0][2];
+        PecaTemporaria.PecaArray[3][0]=PecaAtual.PecaArray[3][3];
+        PecaTemporaria.PecaArray[3][1]=PecaAtual.PecaArray[2][3];
+        PecaTemporaria.PecaArray[3][2]=PecaAtual.PecaArray[1][3];
+        PecaTemporaria.PecaArray[3][3]=PecaAtual.PecaArray[0][3];
+
+        for(int i=0; i<4; i++)
             {
-            return 1;
+            for(int j=0; j<4; j++)
+                {
+                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
+                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                }
             }
-            else{return 0;}
+    return 1;
         }
-    if (direcao=='s')
+    if (direcao=='s')//descer uma casa
         {
-        if(aprovador)
+        PecaTemporaria.PosicaoY = PecaAtual.PosicaoY + 1;
+        for(int i=0; i<4; i++)
             {
-            return 1;
+            for(int j=0; j<4; j++)
+                {
+                if ((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                if ((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
+                }
             }
-            else{return 0;}
+        return 1;
         }
-    if (direcao=='a')
+
+    if (direcao=='a')//mover esquerda
         {
-        if(aprovador)
+        PecaTemporaria.PosicaoX = PecaAtual.PosicaoX - 1;
+        for(int i=0; i<4; i++)
             {
-            return 1;
+                for(int j=0; j<4; j++)
+                    {
+                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                    }
+
             }
-            else{return 0;}
+        return 1;
         }
-    if (direcao=='d')
+
+    if (direcao=='d')//mover direita
         {
-        if(aprovador)
+        PecaTemporaria.PosicaoX = PecaAtual.PosicaoX + 1;
+        for(int i=0; i<4; i++)
             {
-            return 1;
+                for(int j=0; j<4; j++)
+                    {
+                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                    }
+
             }
-            else{return 0;}
+        return 1;
         }
     }
 void ConstruirNovaPeca()
@@ -203,22 +264,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'L';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]=".";
-                    PecaAtual.PecaArray[1][1]=".";
-                    PecaAtual.PecaArray[1][2]="X";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]="X";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]="X";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='.';
+                    PecaAtual.PecaArray[1][1]='.';
+                    PecaAtual.PecaArray[1][2]='X';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='X';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='X';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     ..X.
@@ -230,22 +291,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'J';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]="X";
-                    PecaAtual.PecaArray[1][1]=".";
-                    PecaAtual.PecaArray[1][2]=".";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]="X";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]="X";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='X';
+                    PecaAtual.PecaArray[1][1]='.';
+                    PecaAtual.PecaArray[1][2]='.';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='X';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='X';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     X...
@@ -257,22 +318,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'S';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]=".";
-                    PecaAtual.PecaArray[1][1]="X";
-                    PecaAtual.PecaArray[1][2]="X";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]="X";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]=".";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='.';
+                    PecaAtual.PecaArray[1][1]='X';
+                    PecaAtual.PecaArray[1][2]='X';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='X';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='.';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     .XX.
@@ -284,22 +345,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'Z';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]="X";
-                    PecaAtual.PecaArray[1][1]="X";
-                    PecaAtual.PecaArray[1][2]=".";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]=".";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]="X";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='X';
+                    PecaAtual.PecaArray[1][1]='X';
+                    PecaAtual.PecaArray[1][2]='.';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='.';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='X';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 
 
 /*
@@ -313,22 +374,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'O';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]=".";
-                    PecaAtual.PecaArray[1][1]="X";
-                    PecaAtual.PecaArray[1][2]="X";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]=".";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]="X";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='.';
+                    PecaAtual.PecaArray[1][1]='X';
+                    PecaAtual.PecaArray[1][2]='X';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='.';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='X';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     .XX.
@@ -341,22 +402,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'I';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]="X";
-                    PecaAtual.PecaArray[1][1]="X";
-                    PecaAtual.PecaArray[1][2]="X";
-                    PecaAtual.PecaArray[1][3]="X";
-                    PecaAtual.PecaArray[2][0]=".";
-                    PecaAtual.PecaArray[2][1]=".";
-                    PecaAtual.PecaArray[2][2]=".";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='X';
+                    PecaAtual.PecaArray[1][1]='X';
+                    PecaAtual.PecaArray[1][2]='X';
+                    PecaAtual.PecaArray[1][3]='X';
+                    PecaAtual.PecaArray[2][0]='.';
+                    PecaAtual.PecaArray[2][1]='.';
+                    PecaAtual.PecaArray[2][2]='.';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     XXXX
@@ -368,22 +429,22 @@ void ConstruirNovaPeca()
                 	PecaAtual.Nome = 'T';
                     PecaAtual.PosicaoX = 4;
                     PecaAtual.PosicaoY = 0;
-                    PecaAtual.PecaArray[0][0]=".";
-                    PecaAtual.PecaArray[0][1]=".";
-                    PecaAtual.PecaArray[0][2]=".";
-                    PecaAtual.PecaArray[0][3]=".";
-                    PecaAtual.PecaArray[1][0]=".";
-                    PecaAtual.PecaArray[1][1]="X";
-                    PecaAtual.PecaArray[1][2]=".";
-                    PecaAtual.PecaArray[1][3]=".";
-                    PecaAtual.PecaArray[2][0]="X";
-                    PecaAtual.PecaArray[2][1]="X";
-                    PecaAtual.PecaArray[2][2]="X";
-                    PecaAtual.PecaArray[2][3]=".";
-                    PecaAtual.PecaArray[3][0]=".";
-                    PecaAtual.PecaArray[3][1]=".";
-                    PecaAtual.PecaArray[3][2]=".";
-                    PecaAtual.PecaArray[3][3]=".";
+                    PecaAtual.PecaArray[0][0]='.';
+                    PecaAtual.PecaArray[0][1]='.';
+                    PecaAtual.PecaArray[0][2]='.';
+                    PecaAtual.PecaArray[0][3]='.';
+                    PecaAtual.PecaArray[1][0]='.';
+                    PecaAtual.PecaArray[1][1]='X';
+                    PecaAtual.PecaArray[1][2]='.';
+                    PecaAtual.PecaArray[1][3]='.';
+                    PecaAtual.PecaArray[2][0]='X';
+                    PecaAtual.PecaArray[2][1]='X';
+                    PecaAtual.PecaArray[2][2]='X';
+                    PecaAtual.PecaArray[2][3]='.';
+                    PecaAtual.PecaArray[3][0]='.';
+                    PecaAtual.PecaArray[3][1]='.';
+                    PecaAtual.PecaArray[3][2]='.';
+                    PecaAtual.PecaArray[3][3]='.';
 /*
     ....
     .X..
@@ -395,4 +456,3 @@ void ConstruirNovaPeca()
                 break;
 		}
     }
-
