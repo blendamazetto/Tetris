@@ -10,6 +10,7 @@ void ConstruirCampo();//constroi o campo ao inicio do jogo
 void PrintarCampo();//imprime o jogo na tela sempre que necessario
 void ConstruirNovaPeca();//constroi nova peca quando a atual cair
 void MesclarPecaCampo();//mescla a matriz da PecaAtual com a matriz Campo
+void SalvarCampo();
 int Mover(char);
 int ChecarSeCabe(char);
 
@@ -38,26 +39,26 @@ while(!GameOver)//loop principal
     {
 
 //    EliminarLinhasCompletas();
+
     ConstruirNovaPeca();
     int PecaCaiu = 0;
     while(!PecaCaiu)//loop que verifica se a peca atual caiu
         {
-        clock_t Turno = 99999;//tempo em ms que demora para uma peca cair um quadrado
-        clock_t CurrentTime = clock()/CLOCKS_PER_SEC;//armazena o horario atual para determinar a passagem de um turno(tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
-
         MesclarPecaCampo();
         PrintarCampo();
-
-        while (CurrentTime < (double)(CurrentTime+Turno))//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
+        int inicio = time(0);
+        int agora = 0;
+        float turno = 0.00005;
+        while (agora<inicio+turno)//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
             {
-            if(!PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, esse if sai do while imediatamente
-            char tecla;
+            if(PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, esse if sai do while imediatamente
             if(kbhit()!=0)//verifica se existe alguma tecla pressionada no momento
                 {
-                tecla = getch();//armazena a tecla pressionada na variavel tecla
-                PecaCaiu = Mover(tecla);//assiona a funcao Mover, que retorna ALTO apenas se a peca chegou ao fim da tela
+                PecaCaiu = Mover(getch());//aciona a funcao Mover, que retorna ALTO apenas se a peca chegou ao fim da tela
+                MesclarPecaCampo();
                 PrintarCampo();
                 }
+            agora = time(0);
             }
         PecaCaiu = Mover('s');//funcao que move a peca para baixo ao fim do turno
         }
@@ -80,8 +81,10 @@ void PrintarCampo()
     system("cls");
     for (int i =0; i<20; i++)
         {
+
         for (int j =0; j<10; j++)
             {
+            printf("%c", Campo[i][j]);
             printf("%c", Campo[i][j]);
             }
         printf("\n");
@@ -106,12 +109,22 @@ void MesclarPecaCampo()
             {
              if(PecaAtual.PecaArray[i][j]=='X')
                 {
-                 Campo[i+PecaAtual.PosicaoY][j+PecaAtual.PosicaoX]='X';
+                 Campo[i+PecaAtual.PosicaoY][j+PecaAtual.PosicaoX]=219;
                 }
             }
         }
     }
-
+void SalvarCampo()
+    {
+    system("PAUSE");
+    for (int i =0; i<20; i++)
+        {
+        for (int j =0; j<10; j++)
+            {
+            Campo[i][j]='Y';
+            }
+        }
+    }
 int Mover(char direcao)
     {
     char PecaTemporaria[4][4];
@@ -152,9 +165,13 @@ int Mover(char direcao)
         if(ChecarSeCabe('s'))
             {
             PecaAtual.PosicaoY = PecaAtual.PosicaoY + 1;
+            return 0;
             }
-        else{return 1;}
-        return 0;
+        else
+            {
+            SalvarCampo();
+            return 1;
+            }
         }
 
     if(direcao=='a')//mover peca para esquerda
@@ -203,22 +220,22 @@ int ChecarSeCabe(char direcao)
             {
             for(int j=0; j<4; j++)
                 {
-                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
-                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
-                if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                if((PecaTemporaria.PecaArray[i][j]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                if((PecaTemporaria.PecaArray[i][j]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
+                if((PecaTemporaria.PecaArray[i][j]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
                 }
             }
     return 1;
         }
     if (direcao=='s')//descer uma casa
         {
-        PecaTemporaria.PosicaoY = PecaAtual.PosicaoY + 1;
+        PecaTemporaria.PosicaoY = PecaTemporaria.PosicaoY + 1;
         for(int i=0; i<4; i++)
             {
             for(int j=0; j<4; j++)
                 {
-                if ((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
-                if ((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
+                if ((PecaTemporaria.PecaArray[i][j]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                if ((PecaTemporaria.PecaArray[i][j]=='X') && ((i+PecaTemporaria.PosicaoY)>=20 || (i+PecaTemporaria.PosicaoY)<0)){return 0;}//verifica se a peca ultrapaca os limites em Y
                 }
             }
         return 1;
@@ -226,13 +243,13 @@ int ChecarSeCabe(char direcao)
 
     if (direcao=='a')//mover esquerda
         {
-        PecaTemporaria.PosicaoX = PecaAtual.PosicaoX - 1;
+        PecaTemporaria.PosicaoX = PecaTemporaria.PosicaoX - 1;
         for(int i=0; i<4; i++)
             {
                 for(int j=0; j<4; j++)
                     {
-                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
-                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                    if((PecaTemporaria.PecaArray[i][j]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                    if((PecaTemporaria.PecaArray[i][j]=='X') &&  (j+PecaTemporaria.PosicaoX) < 0){return 0;}//verifica se a peca ultrapaca os limites em X
                     }
 
             }
@@ -241,13 +258,13 @@ int ChecarSeCabe(char direcao)
 
     if (direcao=='d')//mover direita
         {
-        PecaTemporaria.PosicaoX = PecaAtual.PosicaoX + 1;
+        PecaTemporaria.PosicaoX = PecaTemporaria.PosicaoX + 1;
         for(int i=0; i<4; i++)
             {
                 for(int j=0; j<4; j++)
                     {
-                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
-                    if((PecaTemporaria.PecaArray[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
+                    if((PecaTemporaria.PecaArray[i][j]=='X') && (Campo[i+PecaTemporaria.PosicaoY][j+PecaTemporaria.PosicaoX]=='Y')){return 0;}//verifica se a peca ocuparia posicao ja ocupada por pecas antigas
+                    if((PecaTemporaria.PecaArray[i][j]=='X') && ((j+PecaTemporaria.PosicaoX)>=10 || (j+PecaTemporaria.PosicaoX)<0)){return 0;}//verifica se a peca ultrapaca os limites em X
                     }
 
             }
