@@ -5,12 +5,16 @@
 
 
 char Campo[20][10];
+int pontos=0;
 
 void ConstruirCampo();//constroi o campo ao inicio do jogo
 void PrintarCampo();//imprime o jogo na tela sempre que necessario
 void ConstruirNovaPeca();//constroi nova peca quando a atual cair
 void MesclarPecaCampo();//mescla a matriz da PecaAtual com a matriz Campo
 void SalvarCampo();
+void EliminarLinhasCompletas();
+void EliminarLinha(int);
+void RemanejarCampo(int);
 int Mover(char);
 int ChecarSeCabe(char);
 
@@ -38,8 +42,7 @@ int GameOver = 0;
 while(!GameOver)//loop principal
     {
 
-//    EliminarLinhasCompletas();
-
+    EliminarLinhasCompletas();
     ConstruirNovaPeca();
     int PecaCaiu = 0;
     while(!PecaCaiu)//loop que verifica se a peca atual caiu
@@ -48,7 +51,7 @@ while(!GameOver)//loop principal
         PrintarCampo();
         int inicio = time(0);
         int agora = 0;
-        float turno = 0.00005;
+        float turno = 0.5;
         while (agora<inicio+turno)//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
             {
             if(PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, esse if sai do while imediatamente
@@ -72,6 +75,7 @@ void ConstruirCampo()
         for (int j =0; j<10; j++)
             {
             Campo[i][j] = '.';
+
             }
         }
     }
@@ -79,49 +83,95 @@ void ConstruirCampo()
 void PrintarCampo()
     {
     system("cls");
-    for (int i =0; i<20; i++)
+    char bloco = 219;
+    for (int i =0; i<22; i++)
         {
-
-        for (int j =0; j<10; j++)
+        printf("                                                                                                       ");
+        for (int j =0; j<12; j++)
             {
-            printf("%c", Campo[i][j]);
-            printf("%c", Campo[i][j]);
+            if(i==0 && j==0){printf("%c", 218);}//canto esquerdo superior
+            else if(i==0 && j==11)//canto direito superior
+                {
+                printf("%c", 191);
+                printf("     %d pontos", pontos);
+                }
+            else if(i==21 && j==0)//canto esquerdo inferior
+                {
+                printf("%c", 192);
+                }
+            else if(i==21 && j==11)//canto direito inferior
+                {
+                printf("%c", 217);
+                }
+
+            else if(i==0 || i==21)//bordas horizontais
+                {
+                printf("%c", 196);
+                printf("%c", 196);
+                }
+            else if(j==0 || j==11)//bordas verticais
+                {
+                printf("%c", 179);
+                }
+
+
+
+            else
+                {
+                    if(Campo[i-1][j-1]=='.')//espacos vazios
+                        {
+                        printf(" ");
+                        printf(" ");
+                        }
+                    else//pecas
+                        {
+                        printf("%c", bloco);
+                        printf("%c", bloco);
+                        }
+                }
+
             }
         printf("\n");
+
         }
     }
 
 void MesclarPecaCampo()
     {
-    for (int i =0; i<20; i++)//limpa a peca antiga
+    for(int i=0; i<20; i++)
         {
-        for (int j =0; j<10; j++)
+        for(int j=0; j<10; j++)
             {
-            if(Campo[i][j]=='X');
+            if(Campo[i][j]=='X')
                 {
-                Campo[i][j]='.';
+                Campo[i][j] = '.';
                 }
+//            else{}
             }
         }
+
     for (int i=0; i<4; i++)//posiciona a nova peca
         {
         for (int j=0; j<4; j++)
             {
              if(PecaAtual.PecaArray[i][j]=='X')
                 {
-                 Campo[i+PecaAtual.PosicaoY][j+PecaAtual.PosicaoX]=219;
+                 Campo[i+PecaAtual.PosicaoY][j+PecaAtual.PosicaoX]='X';
                 }
             }
         }
     }
 void SalvarCampo()
     {
-    system("PAUSE");
-    for (int i =0; i<20; i++)
+        for(int i=0; i<20; i++)
         {
-        for (int j =0; j<10; j++)
+        for(int j=0; j<10; j++)
             {
-            Campo[i][j]='Y';
+            if(Campo[i][j]=='X')
+                {
+                Campo[i][j] = 'Y';
+                }
+  //          else{}
             }
         }
     }
@@ -193,9 +243,47 @@ int Mover(char direcao)
         }
     return 0;
     }
+void EliminarLinhasCompletas()
+    {
+    int contador= 0;
+    for (int i =0; i<20; i++)
+        {
+        int contador= 0;
+        for (int j =0; j<10; j++)
+            {
+            if(Campo[i][j]!='.'){contador = contador+1;}
+            }
+        if(contador==10)//entra nesse if caso a linha esteja completa
+            {
+            EliminarLinha(i);//elimina a linha que esta completa
+            RemanejarCampo(i);//remaneja as peca que estao acima da linha eliminada
+            }
+        }
+    }
+void EliminarLinha(int linha)
+    {
+    for(int j=0; j<10; j++){Campo[linha][j]='.';}
+    pontos = pontos +100;
+    }
+void RemanejarCampo(int linha)
+    {
+    for (int i =linha-1; i>=0; i--)
+        {
+        for (int j =0; j<10; j++)
+            {
+            if(Campo[i][j]!= '.')
+                {
+                Campo[i+1][j]=Campo[i][j];
+                Campo[i][j]='.';
+                }
+            }
+        }
+    }
+
 
 int ChecarSeCabe(char direcao)
     {
+
     Peca PecaTemporaria = PecaAtual;
     if (direcao=='w')//girar horario
         {
@@ -473,3 +561,5 @@ void ConstruirNovaPeca()
                 break;
 		}
     }
+
+
