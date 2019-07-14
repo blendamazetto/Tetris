@@ -18,6 +18,7 @@ void EliminarLinha(int);
 void RemanejarCampo(int);
 int Mover(char);
 int ChecarSeCabe(char);
+void GameOver();
 
 
 void delay(unsigned int milliseconds){
@@ -184,7 +185,7 @@ void MesclarPecaCampo()
         {
         for (int j=0; j<4; j++)
             {
-             if(PecaAtual.PecaArray[i][j]=='X')
+            if(PecaAtual.PecaArray[i][j]=='X')
                 {
                  Campo[i+PecaAtual.PosicaoY][j+PecaAtual.PosicaoX]='X';
                 }
@@ -322,7 +323,17 @@ void RemanejarCampo(int linha)
             }
         }
     }
-
+void GameOver()
+    {
+    system ("cls");
+    printf("                                                                                                       Fim do jogo\n");
+    printf("                                                                                                       Voce fez %d ponts\n", pontos);
+    printf("                                                                                                       Precione enter para jogar novamente\n");
+    char a;
+    scanf("%c",&a);
+    system ("cls");
+    main();
+    }
 
 int ChecarSeCabe(char direcao)
     {
@@ -404,6 +415,10 @@ int ChecarSeCabe(char direcao)
     }
 void ConstruirNovaPeca()
     {
+    for(int i=0; i<10; i++)
+        {
+        if(Campo[1][i]!='.'){GameOver();}
+        }
 	srand(time(0));//modifica a seed usada pela funcao rand para criar nova peca. usa o horario atual como seed
 	int r = (rand()%7)+1;
 	switch(r)
