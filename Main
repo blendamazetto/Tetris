@@ -7,6 +7,7 @@
 char Campo[20][10];
 int pontos=0;
 
+void Introducao();
 void ConstruirCampo();//constroi o campo ao inicio do jogo
 void PrintarCampo();//imprime o jogo na tela sempre que necessario
 void ConstruirNovaPeca();//constroi nova peca quando a atual cair
@@ -37,6 +38,7 @@ int PosicaoY;
 Peca PecaAtual;
 int main()
 {
+Introducao();
 ConstruirCampo();
 int GameOver = 0;
 while(!GameOver)//loop principal
@@ -66,8 +68,36 @@ while(!GameOver)//loop principal
         PecaCaiu = Mover('s');//funcao que move a peca para baixo ao fim do turno
         }
     }
-}
 
+}
+void Introducao()
+    {
+    printf("                                                                                                       ");
+printf(" _       _        _     \n");
+printf("                                                                                                       ");
+printf("| |     | |      (_)    \n");
+printf("                                                                                                       ");
+printf("| |_ ___| |_ _ __ _ ___ \n");
+printf("                                                                                                       ");
+printf("| __/ _ \\ __| '__| / __|\n");
+printf("                                                                                                       ");
+printf("| ||  __/ |_| |  | \\__ \ \n");
+printf("                                                                                                       ");
+printf(" \\__\\___|\\__|_|  |_|___/\n");
+printf("                                                                                                       ");
+printf("'a' e 'd' movem a peca.\n");
+printf("                                                                                                       ");
+printf("'w' gira a peca.\n");
+printf("                                                                                                       ");
+printf("'s' desce a peca uma casa.\n");
+printf("                                                                                                       ");
+printf("'barra de espaco' desce a peca ate o final.\n");
+printf("                                                                                                       ");
+printf("Aperte enter para comecar.");
+char a;
+scanf("%c",&a);
+
+    }
 void ConstruirCampo()
     {
     for (int i =0; i<20; i++)
@@ -177,6 +207,9 @@ void SalvarCampo()
     }
 int Mover(char direcao)
     {
+
+
+
     char PecaTemporaria[4][4];
     if(direcao=='w')
         {
@@ -241,6 +274,16 @@ int Mover(char direcao)
             }
         return 0;
         }
+    if(direcao==' ')//desces a peca instantaniamente
+        {
+        int PecaCaiu=0;
+        while(!PecaCaiu)
+            {
+            PecaCaiu = Mover('s');
+            MesclarPecaCampo();
+            }
+        }
+
     return 0;
     }
 void EliminarLinhasCompletas()
