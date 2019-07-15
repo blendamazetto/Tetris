@@ -7,21 +7,22 @@
 char Campo[20][10];
 int pontos=0;
 
-void Introducao();
+void Introducao();//printa a introducao e ensina os comando ao jogador
 void ConstruirCampo();//constroi o campo ao inicio do jogo
-void PrintarCampo();//imprime o jogo na tela sempre que necessario
+void PrintarCampo();//modifica os caracteres usados pela engine para os caracteres mostrsdor ao usuario e printa o campo
 void ConstruirNovaPeca();//constroi nova peca quando a atual cair
 void MesclarPecaCampo();//mescla a matriz da PecaAtual com a matriz Campo
-void SalvarCampo();
-void EliminarLinhasCompletas();
-void EliminarLinha(int);
-void RemanejarCampo(int);
-int Mover(char);
-int ChecarSeCabe(char);
-void GameOver();
+void SalvarCampo();//congela as pecas no ponto onde elas cairam
+void EliminarLinhasCompletas();//elimina linhas completas e remaneja o campo
+void EliminarLinha(int);//chamada pela funcao EliminarLinhasCompletas
+void RemanejarCampo(int);//chamada pela funcao EliminarLinhasCompletas
+int Mover(char);//move a peca de acordo com o input do jogador. Retorna BAIXO caso a pecca tenha chegado ao fim do campo
+int ChecarSeCabe(char);//chamada pela funcao Mover. Faz uma simulacao para inferir se a peca cabe na nova posicao escolhida pelo usuario
+//e retorna BAIXO caso a peca nao caiba
+void GameOver();//printa mensagem de fim de jogo, sua pontuacao e reinicia o programa caso o jogador queira jogar novamente
 
 
-void delay(unsigned int milliseconds){
+void delay(unsigned int milliseconds){//funcao que permite criar delays para debugging
 
     clock_t start = clock();
 
@@ -29,7 +30,7 @@ void delay(unsigned int milliseconds){
 }
 
 
-typedef struct
+typedef struct//cria novo tipo para pecas
 {
 char Nome;
 char PecaArray[4][4];
@@ -57,7 +58,7 @@ while(!GameOver)//loop principal
         float turno = 0.5;
         while (agora<inicio+turno)//loop que engloba a passagem de um turno (tempo en que o jogador pode mover a peca antes dela cair uma casa automaticamente)
             {
-            if(PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, esse if sai do while imediatamente
+            if(PecaCaiu){break;}//caso o jogador tenha descido a peca ate ela cair, sai do while imediatamente
             if(kbhit()!=0)//verifica se existe alguma tecla pressionada no momento
                 {
                 PecaCaiu = Mover(getch());//aciona a funcao Mover, que retorna ALTO apenas se a peca chegou ao fim da tela
@@ -74,29 +75,29 @@ while(!GameOver)//loop principal
 void Introducao()
     {
     printf("                                                                                                       ");
-printf(" _       _        _     \n");
-printf("                                                                                                       ");
-printf("| |     | |      (_)    \n");
-printf("                                                                                                       ");
-printf("| |_ ___| |_ _ __ _ ___ \n");
-printf("                                                                                                       ");
-printf("| __/ _ \\ __| '__| / __|\n");
-printf("                                                                                                       ");
-printf("| ||  __/ |_| |  | \\__ \ \n");
-printf("                                                                                                       ");
-printf(" \\__\\___|\\__|_|  |_|___/\n");
-printf("                                                                                                       ");
-printf("'a' e 'd' movem a peca.\n");
-printf("                                                                                                       ");
-printf("'w' gira a peca.\n");
-printf("                                                                                                       ");
-printf("'s' desce a peca uma casa.\n");
-printf("                                                                                                       ");
-printf("'barra de espaco' desce a peca ate o final.\n");
-printf("                                                                                                       ");
-printf("Aperte enter para comecar.");
-char a;
-scanf("%c",&a);
+    printf(" _       _        _     \n");
+    printf("                                                                                                       ");
+    printf("| |     | |      (_)    \n");
+    printf("                                                                                                       ");
+    printf("| |_ ___| |_ _ __ _ ___ \n");
+    printf("                                                                                                       ");
+    printf("| __/ _ \\ __| '__| / __|\n");
+    printf("                                                                                                       ");
+    printf("| ||  __/ |_| |  | \\__ \ \n");
+    printf("                                                                                                       ");
+    printf(" \\__\\___|\\__|_|  |_|___/\n");
+    printf("                                                                                                       ");
+    printf("'a' e 'd' movem a peca.\n");
+    printf("                                                                                                       ");
+    printf("'w' gira a peca.\n");
+    printf("                                                                                                       ");
+    printf("'s' desce a peca uma casa.\n");
+    printf("                                                                                                       ");
+    printf("'barra de espaco' desce a peca ate o final.\n");
+    printf("                                                                                                       ");
+    printf("Aperte enter para comecar.");
+    char a;
+    scanf("%c",&a);
 
     }
 void ConstruirCampo()
